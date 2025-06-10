@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.demo.TablaCitasController" spacing="10" style="-fx-padding: 20;">
+    <Label text="LISTADO DE CITAS" style="-fx-font-weight: bold; -fx-font-size: 16;"/>
+
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Buscar:"/>
+        <TextField fx:id="txtBuscar" promptText="Escribe nombre o mascota..." style="-fx-pref-width: 300;"/>
+    </HBox>
+
+    <TableView fx:id="tablaCitas" prefHeight="400">
+        <columns>
+            <TableColumn fx:id="colNoCita" text="No. Cita" prefWidth="100"/>
+            <TableColumn fx:id="colPropietario" text="Propietario" prefWidth="150"/>
+            <TableColumn fx:id="colNomMascota" text="Mascota" prefWidth="120"/>
+            <TableColumn fx:id="colTipoMascota" text="Tipo" prefWidth="80"/>
+            <TableColumn fx:id="colTipoServicio" text="Servicio" prefWidth="120"/>
+            <TableColumn fx:id="colFecha" text="Fecha" prefWidth="100"/>
+            <TableColumn fx:id="colHora" text="Hora" prefWidth="80"/>
+        </columns>
+    </TableView>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button fx:id="btnEditar" text="Editar" onAction="#editarCita"/>
+        <Button text="Cerrar" onAction="#cerrarVentana"/>
+    </HBox>
+</VBox>

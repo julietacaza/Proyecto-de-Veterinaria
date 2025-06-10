@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.demo.Expediente" prefHeight="500.0" prefWidth="600.0">
+    <children>
+        <Label layoutX="230.0" layoutY="14.0" text="Expediente Médico" style="-fx-font-weight: bold; -fx-font-size: 16;"/>
+
+        <Label layoutX="33.0" layoutY="63.0" text="Nombre del propietario:" />
+        <TextField fx:id="txtPropietario" layoutX="190.0" layoutY="59.0" prefWidth="300.0" />
+
+        <Label layoutX="33.0" layoutY="103.0" text="Nombre de la mascota:" />
+        <TextField fx:id="txtNombreMascota" layoutX="190.0" layoutY="99.0" prefWidth="300.0" />
+
+        <Label layoutX="33.0" layoutY="143.0" text="Fecha:" />
+        <ComboBox fx:id="cmbDia" layoutX="190.0" layoutY="139.0" prefWidth="60.0" promptText="Día" />
+        <ComboBox fx:id="cmbMes" layoutX="260.0" layoutY="139.0" prefWidth="100.0" promptText="Mes" />
+        <ComboBox fx:id="cmbAnio" layoutX="370.0" layoutY="139.0" prefWidth="80.0" promptText="Año" />
+
+        <Label layoutX="33.0" layoutY="183.0" text="Peso (kg):" />
+        <TextField fx:id="txtPeso" layoutX="190.0" layoutY="179.0" prefWidth="100.0" />
+
+        <Label layoutX="33.0" layoutY="223.0" text="Sexo:" />
+        <ComboBox fx:id="cmbSexo" layoutX="190.0" layoutY="219.0" prefWidth="150.0" promptText="Seleccionar" />
+
+        <Label layoutX="33.0" layoutY="263.0" text="Temperatura (°C):" />
+        <TextField fx:id="txtTemperatura" layoutX="190.0" layoutY="259.0" prefWidth="100.0" />
+
+        <Label layoutX="33.0" layoutY="303.0" text="Tipo de animal:" />
+        <ComboBox fx:id="cmbAnimal" layoutX="190.0" layoutY="299.0" prefWidth="150.0" promptText="Seleccionar" />
+
+        <Label layoutX="33.0" layoutY="343.0" text="Servicio:" />
+        <ComboBox fx:id="cmbServicio" layoutX="190.0" layoutY="339.0" prefWidth="200.0" promptText="Seleccionar servicio" />
+
+        <Label layoutX="33.0" layoutY="383.0" text="Hora:" />
+        <ComboBox fx:id="cmbHora" layoutX="190.0" layoutY="379.0" prefWidth="100.0" promptText="Seleccionar hora" />
+
+        <Button fx:id="btnAceptar" layoutX="150.0" layoutY="420.0" mnemonicParsing="false" text="Aceptar" onAction="#onBtnOkClick" />
+        <Button fx:id="btnCancelar" layoutX="260.0" layoutY="420.0" mnemonicParsing="false" text="Cancelar" onAction="#onBtnCancelarClick" />
+    </children>
+</AnchorPane>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.demo.ExpedienteMascotaController"
+            prefHeight="400.0" prefWidth="600.0" style="-fx-padding: 20;">
+
+    <VBox spacing="10" alignment="CENTER" prefWidth="550" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+        <Label text="EXPEDIENTE MÉDICO" style="-fx-font-weight: bold; -fx-font-size: 16;"/>
+
+        <VBox spacing="5" alignment="CENTER_LEFT">
+            <Label fx:id="lblNombreMascota" style="-fx-font-weight: bold;"/>
+            <Label fx:id="lblPropietario" style="-fx-font-weight: bold;"/>
+        </VBox>
+
+        <Label text="Historial de Citas:" style="-fx-font-weight: bold;"/>
+        <TableView fx:id="tablaCitas" prefHeight="200" prefWidth="550">
+            <columns>
+                <TableColumn fx:id="colFecha" text="Fecha" prefWidth="150"/>
+                <TableColumn fx:id="colHora" text="Hora" prefWidth="150"/>
+                <TableColumn fx:id="colServicio" text="Servicio" prefWidth="250"/>
+            </columns>
+        </TableView>
+
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <Button fx:id="btnAbrirConsulta" text="Abrir Consulta" onAction="#abrirConsulta" disable="true"/>
+            <Button text="Cerrar" onAction="#cerrarVentana"/>
+        </HBox>
+    </VBox>
+</AnchorPane>
