@@ -1,4 +1,3 @@
-
 package com.example.demo;
 
 import javafx.fxml.FXML;
@@ -10,6 +9,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.scene.control.Alert;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ExpedienteMascotaController {
     @FXML private Label lblNombreMascota;
@@ -20,17 +20,28 @@ public class ExpedienteMascotaController {
     @FXML private TableColumn<Consulta, String> colServicio;
     @FXML private Button btnAbrirConsulta;
 
-    private Animal mascota;
+    private Animal mascotaSeleccionada;
     private List<Consulta> citas;
     private HelloController helloController;
+
+    public Animal getMascotaSeleccionada() {
+        return mascotaSeleccionada;
+    }
 
     public void setHelloController(HelloController helloController) {
         this.helloController = helloController;
     }
 
     public void setMascota(Animal mascota) {
-        this.mascota = mascota;
+        this.mascotaSeleccionada = mascota;
         cargarDatosMascota();
+        if (helloController != null) {
+            List<Consulta> citasMascota = helloController.getCitas().stream()
+                    .filter(c -> c.getNomMascota().equals(mascota.getNombre()) &&
+                            c.getPropietario().equals(mascota.getPropietario()))
+                    .collect(Collectors.toList());
+            setCitas(citasMascota);
+        }
     }
 
     public void setCitas(List<Consulta> citas) {
@@ -39,8 +50,10 @@ public class ExpedienteMascotaController {
     }
 
     private void cargarDatosMascota() {
-        lblNombreMascota.setText("Mascota: " + mascota.getNombre());
-        lblPropietario.setText("Propietario: " + mascota.getPropietario());
+        if (mascotaSeleccionada != null) {
+            lblNombreMascota.setText("Mascota: " + mascotaSeleccionada.getNombre());
+            lblPropietario.setText("Propietario: " + mascotaSeleccionada.getPropietario());
+        }
     }
 
     private void cargarCitas() {
@@ -48,19 +61,33 @@ public class ExpedienteMascotaController {
         colHora.setCellValueFactory(new PropertyValueFactory<>("hora"));
         colServicio.setCellValueFactory(new PropertyValueFactory<>("tipoServicio"));
 
-        tablaCitas.getItems().setAll(citas);
+        if (citas != null && !citas.isEmpty()) {
+            tablaCitas.getItems().setAll(citas);
+        } else {
+            tablaCitas.getItems().clear();
+        }
 
-        // Habilitar el botón solo cuando se seleccione una cita
-        btnAbrirConsulta.disableProperty().bind(
-                tablaCitas.getSelectionModel().selectedItemProperty().isNull()
+        btnAbrirConsulta.setDisable(tablaCitas.getSelectionModel().getSelectedItem() == null);
+        tablaCitas.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) ->
+                        btnAbrirConsulta.setDisable(newValue == null)
         );
     }
 
     @FXML
     private void abrirConsulta() {
+        if (citas == null || citas.isEmpty()) {
+            Alert alerta = new Alert(Alert.AlertType.WARNING);
+            alerta.setTitle("Consulta requerida");
+            alerta.setHeaderText("No se puede crear una cita");
+            alerta.setContentText("Debe realizarse al menos una consulta antes de agendar una cita.");
+            alerta.showAndWait();
+            return;
+        }
+
         Consulta consultaSeleccionada = tablaCitas.getSelectionModel().getSelectedItem();
-        if (consultaSeleccionada != null && mascota != null) {
-            mostrarDetallesConsulta(mascota, consultaSeleccionada);
+        if (consultaSeleccionada != null && mascotaSeleccionada != null) {
+            mostrarDetallesConsulta(mascotaSeleccionada, consultaSeleccionada);
         }
     }
 
@@ -69,22 +96,24 @@ public class ExpedienteMascotaController {
         alert.setTitle("Detalles de la Consulta");
         alert.setHeaderText("Consulta del " + consulta.getFecha() + " a las " + consulta.getHora());
 
-        String contenido = "Mascota: " + mascota.getNombre() + "\n" +
-                "Propietario: " + mascota.getPropietario() + "\n" +
-                "Tipo: " + mascota.getTipoAnimal() + "\n" +  // Cambiado de getTipo() a getTipoAnimal()
-                "Sexo: " + mascota.getSexo() + "\n" +
-                "Peso: " + mascota.getPeso() + " kg\n" +
-                "Temperatura: " + mascota.getTemperatura() + " °C\n" +
-                "Servicio: " + consulta.getTipoServicio() + "\n" +
-                "Fecha: " + consulta.getFecha() + "\n" +
-                "Hora: " + consulta.getHora();
+        StringBuilder contenido = new StringBuilder();
+        contenido.append("Mascota: ").append(mascota.getNombre()).append("\n")
+                .append("Propietario: ").append(mascota.getPropietario()).append("\n")
+                .append("Tipo: ").append(mascota.getTipoAnimal()).append("\n")
+                .append("Sexo: ").append(mascota.getSexo()).append("\n")
+                .append("Peso: ").append(mascota.getPeso()).append(" kg\n")
+                .append("Temperatura: ").append(mascota.getTemperatura()).append(" °C\n")
+                .append("Servicio: ").append(consulta.getTipoServicio()).append("\n")
+                .append("Fecha: ").append(consulta.getFecha()).append("\n")
+                .append("Hora: ").append(consulta.getHora());
 
-        alert.setContentText(contenido);
+        alert.setContentText(contenido.toString());
         alert.showAndWait();
     }
 
     @FXML
     private void cerrarVentana() {
-        ((Stage) lblNombreMascota.getScene().getWindow()).close();
+        Stage stage = (Stage) lblNombreMascota.getScene().getWindow();
+        stage.close();
     }
 }

@@ -6,10 +6,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Expediente implements Initializable {
 
@@ -24,6 +22,7 @@ public class Expediente implements Initializable {
     @FXML private ComboBox<String> cmbAnimal;
     @FXML private ComboBox<String> cmbServicio;
     @FXML private ComboBox<String> cmbHora;
+    @FXML private ComboBox<String> cmbMascotasPropietario; // Cambiado a ComboBox<String>
 
     private final List<String> meses = Arrays.asList(
             "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
@@ -49,8 +48,11 @@ public class Expediente implements Initializable {
         double peso = Double.parseDouble(txtPeso.getText());
         double temperatura = Double.parseDouble(txtTemperatura.getText());
         String servicio = cmbServicio.getValue();
+        String fecha = String.format("%s/%s/%s", cmbDia.getValue(), cmbMes.getValue(), cmbAnio.getValue());
         String hora = cmbHora.getValue();
-        String fecha = String.format("%s %s %s", cmbDia.getValue(), cmbMes.getValue(), cmbAnio.getValue());
+
+        boolean esMascotaExistente = cmbMascotasPropietario.getValue() != null &&
+                cmbMascotasPropietario.getValue().contains(nombreMascota);
 
         Animal nuevoAnimal = new Animal(
                 nombreMascota,
@@ -62,22 +64,16 @@ public class Expediente implements Initializable {
                 propietario
         );
 
+        Consulta nuevaConsulta = new Consulta(propietario, nombreMascota, fecha, servicio, tipoAnimal);
+        nuevaConsulta.setHora(hora);
+        nuevoAnimal.agregarConsulta(nuevaConsulta);
+
         if (helloController != null) {
             boolean guardadoExitoso = helloController.agregarAnimal(nuevoAnimal);
             if (guardadoExitoso) {
-                Consulta nuevaConsulta = new Consulta(
-                        propietario,
-                        nombreMascota,
-                        fecha,
-                        servicio,
-                        tipoAnimal
-                );
-                nuevaConsulta.setHora(hora);
                 helloController.agregarCita(nuevaConsulta, false);
-
                 mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito",
-                        "Expediente guardado",
-                        "El expediente se ha registrado correctamente.");
+                        "Expediente guardado", "El expediente se ha registrado correctamente.");
                 limpiarFormulario();
             }
         }
@@ -147,6 +143,7 @@ public class Expediente implements Initializable {
         cmbAnimal.getSelectionModel().clearSelection();
         cmbServicio.getSelectionModel().clearSelection();
         cmbHora.getSelectionModel().clearSelection();
+        cmbMascotasPropietario.getItems().clear();
     }
 
     private void mostrarAlerta(Alert.AlertType tipo, String titulo, String encabezado, String contenido) {
@@ -165,8 +162,9 @@ public class Expediente implements Initializable {
         cmbMes.getItems().addAll(meses);
 
         cmbHora.getItems().addAll(
-                "08:00", "09:00", "10:00", "11:00", "12:00",
-                "13:00", "14:00", "15:00", "16:00", "17:00"
+                "08:00", "08:30", "09:00", "09:30", "10:00", "10:30",
+                "11:00", "11:30", "12:00", "12:30", "13:00", "13:30",
+                "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"
         );
 
         for (int i = 2025; i <= 2040; i++) {
@@ -189,6 +187,56 @@ public class Expediente implements Initializable {
 
         cmbMes.valueProperty().addListener((observable, oldValue, newValue) -> actualizarDias());
         cmbAnio.valueProperty().addListener((observable, oldValue, newValue) -> actualizarDias());
+
+        txtPropietario.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && !newValue.isEmpty() && helloController != null) {
+                List<Consulta> citasPropietario = helloController.getCitas().stream()
+                        .filter(c -> c.getPropietario().equalsIgnoreCase(newValue))
+                        .collect(Collectors.toList());
+
+                cmbMascotasPropietario.getItems().clear();
+                Set<String> mascotasUnicas = new HashSet<>();
+
+                citasPropietario.forEach(c -> {
+                    String mascotaInfo = c.getNomMascota() + " (" + c.getTipoMascota() + ")";
+                    if (!mascotasUnicas.contains(mascotaInfo.toLowerCase())) {
+                        cmbMascotasPropietario.getItems().add(mascotaInfo);
+                        mascotasUnicas.add(mascotaInfo.toLowerCase());
+                    }
+                });
+
+                if (!cmbMascotasPropietario.getItems().isEmpty()) {
+                    cmbMascotasPropietario.show();
+                } else {
+                    cmbMascotasPropietario.hide();
+                }
+            } else {
+                cmbMascotasPropietario.hide();
+            }
+        });
+
+        cmbMascotasPropietario.setOnAction(event -> {
+            String seleccion = cmbMascotasPropietario.getValue();
+            if (seleccion != null) {
+                String nombreMascota = seleccion.split("\\(")[0].trim();
+                String tipoMascota = seleccion.split("\\(")[1].replace(")", "").trim();
+
+                txtNombreMascota.setText(nombreMascota);
+                cmbAnimal.setValue(tipoMascota);
+
+                // Buscar el sexo en los animales registrados
+                if (helloController != null) {
+                    Optional<Animal> animal = helloController.getAnimales().stream()
+                            .filter(a -> a.getNombre().equalsIgnoreCase(nombreMascota) &&
+                                    a.getPropietario().equalsIgnoreCase(txtPropietario.getText()))
+                            .findFirst();
+
+                    if (animal.isPresent()) {
+                        cmbSexo.setValue(animal.get().getSexo());
+                    }
+                }
+            }
+        });
     }
 
     private void actualizarDias() {

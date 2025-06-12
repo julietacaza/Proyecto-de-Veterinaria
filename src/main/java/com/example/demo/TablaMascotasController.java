@@ -12,6 +12,8 @@ import java.util.List;
 public class TablaMascotasController {
     @FXML private TableView<Animal> tablaMascotas;
     @FXML private TableColumn<Animal, String> colNombre;
+    @FXML private TableColumn<Animal, String> colPropietario;
+    @FXML private TableColumn<Animal, String> colTipo;
     @FXML private TextField txtBuscar;
     @FXML private Button btnVerExpediente;
 
@@ -41,7 +43,9 @@ public class TablaMascotasController {
 
         String textoBusquedaLower = textoBusqueda.toLowerCase();
         animalesFiltrados.setPredicate(mascota ->
-                mascota.getNombre().toLowerCase().startsWith(textoBusquedaLower)
+                mascota.getNombre().toLowerCase().contains(textoBusquedaLower) ||
+                        mascota.getPropietario().toLowerCase().contains(textoBusquedaLower) ||
+                        mascota.getTipoAnimal().toLowerCase().contains(textoBusquedaLower)
         );
     }
 
@@ -55,6 +59,9 @@ public class TablaMascotasController {
     @FXML
     public void initialize() {
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+        colPropietario.setCellValueFactory(new PropertyValueFactory<>("propietario"));
+        colTipo.setCellValueFactory(new PropertyValueFactory<>("tipoAnimal"));
+
         btnVerExpediente.disableProperty().bind(
                 tablaMascotas.getSelectionModel().selectedItemProperty().isNull()
         );
