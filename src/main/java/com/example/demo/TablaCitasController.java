@@ -26,6 +26,10 @@ public class TablaCitasController {
         this.helloController = helloController;
     }
 
+    /**
+     * Recibe únicamente las citas provenientes del formulario de citas.
+     */
+
     public void setCitas(List<Consulta> citas) {
         this.todasLasCitas = citas;
         configurarColumnas();
@@ -81,4 +85,3 @@ public class TablaCitasController {
         ((Stage) tablaCitas.getScene().getWindow()).close();
     }
 }
-
