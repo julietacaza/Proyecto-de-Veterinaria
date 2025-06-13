@@ -37,7 +37,7 @@ public class Expediente implements Initializable {
     }
 
     @FXML
-    public void onBtnOkClick(ActionEvent actionEvent) {
+    public void onBtnOkClick(ActionEvent ignoredActionEvent) {
         if (!validarCampos()) {
             return;
         }
@@ -203,25 +203,12 @@ public class Expediente implements Initializable {
     }
 
     private int obtenerDiasDelMes(String mes, int anio) {
-        switch (mes) {
-            case "Enero":
-            case "Marzo":
-            case "Mayo":
-            case "Julio":
-            case "Agosto":
-            case "Octubre":
-            case "Diciembre":
-                return 31;
-            case "Abril":
-            case "Junio":
-            case "Septiembre":
-            case "Noviembre":
-                return 30;
-            case "Febrero":
-                return esBisiesto(anio) ? 29 : 28;
-            default:
-                return 0;
-        }
+        return switch (mes) {
+            case "Enero", "Marzo", "Mayo", "Julio", "Agosto", "Octubre", "Diciembre" -> 31;
+            case "Abril", "Junio", "Septiembre", "Noviembre" -> 30;
+            case "Febrero" -> esBisiesto(anio) ? 29 : 28;
+            default -> 0;
+        };
     }
 
     private boolean esBisiesto(int anio) {
