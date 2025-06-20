@@ -10,7 +10,7 @@ public class Mascota {
     private String propietario; // Añade este campo
 
     public Mascota(String nombre, String tipoAnimal, String sexo,
-                      double peso, double temperatura, String servicio, String propietario) {
+                   double peso, double temperatura, String servicio, String propietario) {
         this.nombre = nombre;
         this.tipoAnimal = tipoAnimal;
         this.sexo = sexo;

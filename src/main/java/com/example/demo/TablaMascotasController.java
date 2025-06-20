@@ -10,25 +10,25 @@ import javafx.stage.Stage;
 import java.util.List;
 
 public class TablaMascotasController {
-    @FXML private TableView<Animal> tablaMascotas;
-    @FXML private TableColumn<Animal, String> colNombre;
-    @FXML private TableColumn<Animal, String> colPropietario;
-    @FXML private TableColumn<Animal, String> colTipo;
+    @FXML private TableView<Mascota> tablaMascotas;
+    @FXML private TableColumn<Mascota, String> colNombre;
+    @FXML private TableColumn<Mascota, String> colPropietario;
+    @FXML private TableColumn<Mascota, String> colTipo;
     @FXML private TextField txtBuscar;
     @FXML private Button btnVerExpediente;
 
     private HelloController helloController;
-    private ObservableList<Animal> animalesObservable = FXCollections.observableArrayList();
-    private FilteredList<Animal> animalesFiltrados;
+    private ObservableList<Mascota> mascotasObservable = FXCollections.observableArrayList();
+    private FilteredList<Mascota> mascotasFiltradas;
 
     public void setHelloController(HelloController helloController) {
         this.helloController = helloController;
     }
 
-    public void setAnimales(List<Animal> animales) {
-        this.animalesObservable.setAll(animales);
-        this.animalesFiltrados = new FilteredList<>(animalesObservable, p -> true);
-        tablaMascotas.setItems(animalesFiltrados);
+    public void setMascotas(List<Mascota> mascotas) {
+        this.mascotasObservable.setAll(mascotas);
+        this.mascotasFiltradas = new FilteredList<>(mascotasObservable, p -> true);
+        tablaMascotas.setItems(mascotasFiltradas);
 
         txtBuscar.textProperty().addListener((observable, oldValue, newValue) -> {
             filtrarMascotas(newValue);
@@ -37,22 +37,22 @@ public class TablaMascotasController {
 
     private void filtrarMascotas(String textoBusqueda) {
         if (textoBusqueda == null || textoBusqueda.isEmpty()) {
-            animalesFiltrados.setPredicate(mascota -> true);
+            mascotasFiltradas.setPredicate(mascota -> true);
             return;
         }
 
         String textoBusquedaLower = textoBusqueda.toLowerCase();
-        animalesFiltrados.setPredicate(mascota ->
+        mascotasFiltradas.setPredicate(mascota ->
                 mascota.getNombre().toLowerCase().contains(textoBusquedaLower) ||
                         mascota.getPropietario().toLowerCase().contains(textoBusquedaLower) ||
                         mascota.getTipoAnimal().toLowerCase().contains(textoBusquedaLower)
         );
     }
 
-    public void actualizarTabla(List<Animal> animales) {
-        this.animalesObservable.setAll(animales);
-        if (animalesFiltrados != null) {
-            animalesFiltrados.setPredicate(null);
+    public void actualizarTabla(List<Mascota> mascotas) {
+        this.mascotasObservable.setAll(mascotas);
+        if (mascotasFiltradas != null) {
+            mascotasFiltradas.setPredicate(null);
         }
     }
 
@@ -69,7 +69,7 @@ public class TablaMascotasController {
 
     @FXML
     private void verExpediente() {
-        Animal mascotaSeleccionada = tablaMascotas.getSelectionModel().getSelectedItem();
+        Mascota mascotaSeleccionada = tablaMascotas.getSelectionModel().getSelectedItem();
         if (mascotaSeleccionada != null && helloController != null) {
             helloController.mostrarExpedienteMascota(mascotaSeleccionada);
         }

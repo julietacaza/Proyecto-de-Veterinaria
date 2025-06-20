@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.Consulta;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -19,19 +20,15 @@ public class TablaCitasController {
     @FXML private TextField txtBuscar;
     @FXML private Button btnEditar;
 
-    private List<Consulta> todasLasCitas;
+    private List<Consulta> citasFormulario;
     private HelloController helloController;
 
     public void setHelloController(HelloController helloController) {
         this.helloController = helloController;
     }
 
-    /**
-     * Recibe únicamente las citas provenientes del formulario de citas.
-     */
-
-    public void setCitas(List<Consulta> citas) {
-        this.todasLasCitas = citas;
+    public void setCitasDesdeFormulario(List<Consulta> citas) {
+        this.citasFormulario = citas;
         configurarColumnas();
         actualizarTabla(citas);
 
@@ -44,11 +41,11 @@ public class TablaCitasController {
 
     private void filtrarCitas(String textoBusqueda) {
         if (textoBusqueda == null || textoBusqueda.isEmpty()) {
-            tablaCitas.getItems().setAll(todasLasCitas);
+            tablaCitas.getItems().setAll(citasFormulario);
             return;
         }
 
-        List<Consulta> citasFiltradas = todasLasCitas.stream()
+        List<Consulta> citasFiltradas = citasFormulario.stream()
                 .filter(consulta ->
                         consulta.getPropietario().toLowerCase().startsWith(textoBusqueda.toLowerCase()) ||
                                 consulta.getNomMascota().toLowerCase().startsWith(textoBusqueda.toLowerCase()))
@@ -58,12 +55,12 @@ public class TablaCitasController {
     }
 
     public void actualizarTabla(List<Consulta> nuevasCitas) {
-        this.todasLasCitas = nuevasCitas;
+        this.citasFormulario = nuevasCitas;
         tablaCitas.getItems().setAll(nuevasCitas);
     }
 
     private void configurarColumnas() {
-        colNoCita.setCellValueFactory(new PropertyValueFactory<>("noCita"));
+        colNoCita.setCellValueFactory(new PropertyValueFactory<>("noConsulta"));
         colPropietario.setCellValueFactory(new PropertyValueFactory<>("propietario"));
         colNomMascota.setCellValueFactory(new PropertyValueFactory<>("nomMascota"));
         colTipoMascota.setCellValueFactory(new PropertyValueFactory<>("tipoMascota"));

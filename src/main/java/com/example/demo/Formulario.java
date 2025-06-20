@@ -5,8 +5,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class Formulario {
     private HelloController helloController;
@@ -21,11 +24,35 @@ public class Formulario {
     @FXML private ComboBox<String> cmbMes;
     @FXML private ComboBox<String> cmbAnio;
     @FXML private ComboBox<String> cmbHora;
+    @FXML private ComboBox<MascotaInfo> cmbMascotasPropietario;
 
     private final List<String> meses = Arrays.asList(
             "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
             "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
     );
+
+    private static class MascotaInfo {
+        private String nombre;
+        private String tipo;
+
+        public MascotaInfo(String nombre, String tipo) {
+            this.nombre = nombre;
+            this.tipo = tipo;
+        }
+
+        @Override
+        public String toString() {
+            return nombre + " (" + tipo + ")";
+        }
+
+        public String getNombre() {
+            return nombre;
+        }
+
+        public String getTipo() {
+            return tipo;
+        }
+    }
 
     public void setHelloController(HelloController helloController) {
         this.helloController = helloController;
@@ -36,9 +63,9 @@ public class Formulario {
     }
 
     public void cargarDatosParaEdicion(Consulta cita) {
-        String[] partesFecha = cita.getFecha().split(" ");
+        String[] partesFecha = cita.getFecha().split("/");
         String dia = partesFecha[0];
-        String mes = partesFecha[1];
+        String mes = String.valueOf(meses.get(Integer.parseInt(partesFecha[1]) - 1));
         String anio = partesFecha[2];
 
         txtPropietario.setText(cita.getPropietario());
@@ -110,20 +137,22 @@ public class Formulario {
     }
 
     private boolean guardarCita() {
-        String fecha = String.format("%s %s %s",
-                cmbDia.getValue(), cmbMes.getValue(), cmbAnio.getValue());
+        String fecha = String.format("%s/%s/%s",
+                cmbDia.getValue(),
+                (meses.indexOf(cmbMes.getValue()) + 1),
+                cmbAnio.getValue());
 
-        Consulta consulta = new Consulta(
+        Consulta nuevaConsulta = new Consulta(
                 txtPropietario.getText(),
                 txtNomMascota.getText(),
                 fecha,
                 cmbServicio.getValue(),
                 cmbAnimal.getValue()
         );
-        consulta.setHora(cmbHora.getValue());
+        nuevaConsulta.setHora(cmbHora.getValue());
 
         if (helloController != null) {
-            boolean guardadoExitoso = helloController.agregarCita(consulta, modoEdicion);
+            boolean guardadoExitoso = helloController.agregarCita(nuevaConsulta, modoEdicion);
             if (!guardadoExitoso) {
                 mostrarAlerta(Alert.AlertType.WARNING, "Conflicto de Horario",
                         "Ya existe una cita programada en esa fecha y hora",
@@ -160,16 +189,50 @@ public class Formulario {
                 "14:00", "14:30", "15:00", "15:30", "16:00", "16:30"
         );
 
-        // Solo permite números en teléfono
         txtNumTelefono.setTextFormatter(new TextFormatter<>(change -> {
             if (change.getText().matches("[0-9]*")) {
                 return change;
             }
-            return null; // Si no es un número, no lo permite
+            return null;
         }));
 
         cmbMes.valueProperty().addListener((observable, oldValue, newValue) -> actualizarDias());
         cmbAnio.valueProperty().addListener((observable, oldValue, newValue) -> actualizarDias());
+
+        txtPropietario.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null && !newValue.isEmpty() && helloController != null) {
+                List<Consulta> citasPropietario = helloController.getCitas().stream()
+                        .filter(c -> c.getPropietario().equalsIgnoreCase(newValue))
+                        .collect(Collectors.toList());
+
+                cmbMascotasPropietario.getItems().clear();
+                Set<String> nombresMascotas = new HashSet<>();
+
+                citasPropietario.forEach(c -> {
+                    if (!nombresMascotas.contains(c.getNomMascota().toLowerCase())) {
+                        cmbMascotasPropietario.getItems().add(
+                                new MascotaInfo(c.getNomMascota(), c.getTipoMascota()));
+                        nombresMascotas.add(c.getNomMascota().toLowerCase());
+                    }
+                });
+
+                if (!cmbMascotasPropietario.getItems().isEmpty()) {
+                    cmbMascotasPropietario.show();
+                } else {
+                    cmbMascotasPropietario.hide();
+                }
+            } else {
+                cmbMascotasPropietario.hide();
+            }
+        });
+
+        cmbMascotasPropietario.setOnAction(event -> {
+            MascotaInfo seleccionada = cmbMascotasPropietario.getValue();
+            if (seleccionada != null) {
+                txtNomMascota.setText(seleccionada.getNombre());
+                cmbAnimal.setValue(seleccionada.getTipo());
+            }
+        });
     }
 
     private void actualizarDias() {

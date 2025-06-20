@@ -63,7 +63,7 @@ public class Expediente implements Initializable {
         );
 
         if (helloController != null) {
-            boolean guardadoExitoso = helloController.agregarAnimal(nuevoAnimal);
+            boolean guardadoExitoso = helloController.agregarCita(nuevoAnimal);
             if (guardadoExitoso) {
                 Consulta nuevaConsulta = new Consulta(
                         propietario,
@@ -215,4 +215,3 @@ public class Expediente implements Initializable {
         return (anio % 4 == 0 && (anio % 100 != 0 || anio % 400 == 0));
     }
 }
-
