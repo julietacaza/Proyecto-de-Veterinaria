@@ -115,7 +115,7 @@ public class HelloController {
     @FXML
     private void abrirFormulario() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/proyectveterinaria/Formulario.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/demo/Formulario.fxml"));
             Parent root = loader.load();
 
             Stage stage = new Stage();
@@ -136,14 +136,14 @@ public class HelloController {
     @FXML
     private void abrirExpediente() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/proyectveterinaria/Expediente.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/demo/Expediente.fxml"));
             Parent root = loader.load();
 
             Stage stage = new Stage();
             stage.setTitle("Expediente Médico");
             stage.setScene(new Scene(root));
 
-            ExpedienteController controller = loader.getController();
+            Expediente controller = loader.getController();
             controller.setHelloController(this);
 
             stage.show();

@@ -4,14 +4,14 @@
              version="2.0">
     <persistence-unit name="com.example.demo">
         <description>Proyecto template ejemplo</description>
-        <class>com.ites.proyectotemplate.models.Usuario</class>
+        <class>com.example.demo.models.Animal</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>
             <property name="hibernate.hbm2ddl.auto" value="create"/>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
             <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost/veterinaria"/>
             <property name="javax.persistence.jdbc.user" value="root"/>
-            <property name="javax.persistence.jdbc.password" value="caza71421"/>
+            <property name="javax.persistence.jdbc.password" value="jdyc0602"/>
         </properties>
     </persistence-unit>
 </persistence>

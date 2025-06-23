@@ -9,6 +9,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import static com.example.demo.utils.DataInitializer.initialize;
+
 public class HelloApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
@@ -16,7 +18,8 @@ public class HelloApplication extends Application {
         DataInitializer.initialize();
 
         // Cargar el FXML principal con la ruta correcta
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/proyectveterinaria/Veterinaria.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource(
+                "/com/example/demo/Veterinaria.fxml"));
         Parent root = fxmlLoader.load();
 
         // Obtener el controlador y cargar datos
@@ -29,10 +32,6 @@ public class HelloApplication extends Application {
         stage.show();
     }
 
-    @Override
-    public void stop() {
-        com.example.demo.utils.HibernateUtils.closeEntityManagerFactory();
-    }
 
     public static void main(String[] args) {
         launch(args);

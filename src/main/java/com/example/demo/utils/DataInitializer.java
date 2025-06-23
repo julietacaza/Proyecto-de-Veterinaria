@@ -11,10 +11,11 @@ public class DataInitializer {
             String[] Servicios = {"Vacunación", "Desparasitación", "Consulta general", "Cirugía"};
 
             for (String nombreServicio : Servicios) {
-                 Servicio servicio = new Servicio(nombreServicio);
+                Servicio servicio = new Servicio(nombreServicio);
                 servicioService.guardarServicio(servicio);
             }
         }
     }
 }
+
 

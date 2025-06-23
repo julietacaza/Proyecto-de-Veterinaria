@@ -4,21 +4,26 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
 public class HibernateUtils {
-    private static EntityManagerFactory entityManagerFactory = null;
 
-    public HibernateUtils() {
+    private static final EntityManagerFactory emf = buildEntityManagerFactory();
 
+    private static EntityManagerFactory buildEntityManagerFactory() {
+        try {
+            return Persistence.createEntityManagerFactory("com.example.demo");
+        } catch (Exception e) {
+            System.err.println(" Error al crear EntityManagerFactory: " + e.getMessage());
+            throw new RuntimeException("No se pudo crear EntityManagerFactory", e);
+        }
     }
 
     public static EntityManagerFactory getEntityManagerFactory() {
-        if (entityManagerFactory == null) {
-            entityManagerFactory = Persistence.createEntityManagerFactory( "com.example.proyectveterinaria" );
-        }
-        return entityManagerFactory;
+        return emf;
     }
 
     public static void closeEntityManagerFactory() {
-        if (entityManagerFactory != null)
-            entityManagerFactory.close();
+        if (emf != null && emf.isOpen()) {
+            emf.close();
+            System.out.println("✅ EntityManagerFactory cerrado correctamente.");
+        }
     }
 }
